@@ -12,7 +12,13 @@
     "jade": "*",
     "marked": "*",
     "stylus": "*",
-    "nib": "*"
+    "nib": "*",
+    "jQuery": "*",
+    "jsdom": "*",
+    "socket.io": "*",
+    "libxml-to-js": "*",
+    "cron": "*",
+    "xmlhttprequest": "*"
   },
   "devDependencies": {},
   "scripts": {
