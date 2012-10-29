@@ -23,38 +23,48 @@ class Chiebukuro
     @address = "http://chiebukuro.yahooapis.jp/Chiebukuro/V1/getNewQuestionList"
     @params = "&condition=solved&sort=-anscount&output=json"
 
-  set:()->
-    console.log @category_list
+  autoreload:()->
     _.each @category_list, (categoryname, categoryid)=>
       $.ajax
         url: @address+"?appid="+@APP_ID+@params+"&category_id="+categoryid
         type:"GET"
         success:(data)=>
+          parentCategoryId = categoryid
           results = data.ResultSet.Result
           chiebukuroModel = @mongoose.model 'chiebukuro'
-          _.each results, (result)->
-            chiebukuroModel.find questionId: result.questionId, (err, docs)=>
+          _.each results, (result)=>
+            chiebukuroModel.find questionId: result.QuestionId, (err, docs)=>
               if err
                 throw err
-              if docs.length == 0
-                instance = new chiebukuroModel()
-                instance.questionId = result.questionId
-                instance.content = result.Content
-                instance.category = result.Category
-                instance.categoryId = result.categoryId
-                instance.bestAnswer = result.BestAnswer
-                instance.save (err)->
-                  if err
-                    throw err
-                  else
-                    console.log 'success'
+              instance = new chiebukuroModel()
+              instance.questionId = result.QuestionId
+              instance.content = result.Content
+              instance.category = result.Category
+              instance.parentCategoryId = parentCategoryId
+              instance.categoryId = result.CategoryId
+              instance.bestAnswer = result.BestAnswer
+              instance.save (err)->
+                if err
+                  throw err
+                else
+                  console.log 'success'
         error:(err)->
           console.log err
+  reset:->
+    chiebukuroModel = @mongoose.model 'chiebukuro'
+    chiebukuroModel.find {}, (err, docs)->
+      if !err
+        _.each docs, (doc)->
+          docs.remove()
+
+  post:(name, category, message)->
+
 
   get:()->
     chiebukuroModel = @mongoose.model 'chiebukuro'
     _.each @category_list, (categoryname, categoryid)=>
       chiebukuroModel.find {}, (err, docs)->
+        console.log docs
 
 
 module.exports = Chiebukuro

@@ -54,12 +54,16 @@ exports.AppController = (app) ->
 
     chiebukuro:(req, res, next)->
       c = new Chiebukuro()
-      c.set()
+      c.autoreload()
       res.send 'hoge'
     chiebukuroGet:(req, res, next)->
       c = new Chiebukuro()
       hoge = c.get()
       res.json hoge
+    chiebukuroReset:(req, res, next)->
+      c = new Chiebukuro()
+      c.reset()
+      res.send 'reset'
 
     weather: (req,res,next)->
       body = weather.get req.params.prefecture, req.params.area, (body)->

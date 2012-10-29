@@ -15,3 +15,4 @@ module.exports = (app, io) ->
   app.get "/weather/:prefecture/:area", AppController.weather
   app.get "/chiebukuro", AppController.chiebukuro
   app.get "/chiebukuro_get", AppController.chiebukuroGet
+  app.get "/chiebukuro_reset", AppController.chiebukuroReset
