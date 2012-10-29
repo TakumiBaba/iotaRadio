@@ -25,3 +25,7 @@ module.exports = (app, io) ->
         # description = description.replace /（[０-９][０-９]）/, ""
         result_text += "#{article.title}\n#{description}"
       res.send result_text
+  app.get "/weather/get/get", AppController.weather_test
+  app.get "/weather/:prefecture/:area", AppController.weather
+  app.get "/chiebukuro", AppController.chiebukuro
+  app.get "/chiebukuro_get", AppController.chiebukuroGet

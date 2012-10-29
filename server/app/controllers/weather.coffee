@@ -1,38 +1,31 @@
 fs = require 'fs'
+mongoose = require 'mongoose'
 module.exports = ()->
   return{
-    get: (area)->
+    get: (prefecture, area,fn)->
       weatherDir = "./public/weather_channel/"
       aCodeList = fs.readdirSync weatherDir
       body = ""
       detailList = []
       prefCode = @getPrefecturesData()
-      prefRegExp = new RegExp area
-      _.each prefCode, (data)->
-        if data.prefecture.match prefRegExp
-          _.each data.cities, (city)->
-            detailList.push city.code
-      _.each aCodeList, (aCode)->
-        detailFlag = false
-        _.each detailList, (d)->
-          d = String d
-          aCode = String aCode
-          if d is aCode
-            detailFlag = true
-        if detailFlag is true
-          body += fs.readFileSync weatherDir+aCode+"/detail.txt"
-        else
-          body += fs.readFileSync weatherDir+aCode+"/simple.txt"
+      prefRegExp = new RegExp prefecture
+      cityRegExp = new RegExp area
+      weatherModel = mongoose.model 'weather'
+      weatherModel.find {}, (err, docs)=>
+        body = ""
+        _.each docs, (d)=>
+          console.log d.prefecture.match(prefRegExp)
+          if d.prefecture.match(prefRegExp) && d.name.match(cityRegExp)
+            body += d.detail
+          else if d.prefecture.match(prefRegExp)
+            body += d.simple
+          else if d.isMajor is true
+            body += d.simple
+        fn(body)
 
-      return body
-
-    reload: ()->
-      _.each getPrefecturesData(), (d)->
-        p = d.prefecture
-        _.each d.cities, (value, key)->
-          set(p, key, value.code)
-
-    set: (pName, cName, aCode)->
+    set: (pName, cName, data)->
+      aCode = data.code
+      isMajor = data.isMajor
       apiCount = 11
       serverID = "w002"
       userID   = "e2546d6779cc220ce1f4924d8e5d553203582559"
@@ -44,28 +37,61 @@ module.exports = ()->
       pollen = {}
       comfort = {num:0,rank:0}
       wash = {num:0,rank:0}
-      violet ={num:0,rank:0}
-      umbrella = cough =　skin = hotpot = 0
-      beer = ice = starry = quilt = cloth_layer = 0
+      violet = {num:0,rank:0}
+      umbrella = {num:0,rank:0}
+      cough = {num:0,rank:0}
+      skin = {num:0,rank:0}
+      hotpot = {num:0,rank:0}
+      starry = {num:0,rank:0}
+      quilt = {num:0,rank:0}
+      cloth_layer = {num:0,rank:0}
 
-      countCheck = ()->
+      countCheck = ()=>
         apiCount -= 1
-        detail = "#{pName}、#{cName}の天気は、#{weather},最低気温は、#{temp.min}℃最高気温は、#{temp.max}℃です。体感温度は、#{temp.effective}です。続いて各種指数についてお知らせします。紫外線指数は #{violet.num} と#{violet.rank}でしょう。傘指数は、#{umbrella}です。洗濯指数は、#{wash.num}で#{wash.rank}でしょう。風邪ひき指数は、#{cough}です。素肌乾燥指数は、#{skin}です。鍋物指数は、#{hotpot}です。星空指数は、#{starry}です。掛け布団指数は、#{quilt}です。重ね着指数は、#{cloth_layer}です。"
-        simple = "#{pName}、#{cName}の天気は、#{weather},最低気温は、#{temp.min}℃最高気温は、#{temp.max}℃です。"
+        detail = "#{pName}、#{cName}の天気は、#{weather},最低気温は、#{temp.min}度、最高気温は、#{temp.max}度です。!!!"+
+        "続いて各種指数についてお知らせします。!!!"+
+        "紫外線指数は #{violet.num} 。#{violet.rank}でしょう。!!!"+
+        "かさ指数は、#{umbrella.num}です。#{umbrella.rank}!!!"+
+        "せんたく指数は、#{wash.num}です。#{wash.rank}!!!"+
+        "かぜひき指数は、#{cough.num}です。#{cough.rank}!!!"+
+        "素肌感想指数は、#{skin.num}です。#{skin.rank}!!!"+
+        "鍋物指数は、#{hotpot.num}です。#{hotpot.rank}!!!"+
+        "星空指数は、#{starry.num}です。#{starry.rank}!!!"+
+        "掛け布団指数は、#{quilt.num}です。#{quilt.rank}!!!"+
+        "重ね着指数は、#{cloth_layer.num}です。#{cloth_layer.rank}!!!"
+        simple = "#{pName}、#{cName}の天気は、#{weather},最低気温は、#{temp.min}度、最高気温は、#{temp.max}度です。!!!"
         if apiCount is 0
-          fileDir = "./public/weather_channel/"+areacode+"/"
-          weatherDir = fs.readdir fileDir, (err, files)->
+          weatherModel = mongoose.model 'weather'
+          weatherModel.find areaCode: aCode, (err, docs)->
             if err
-              fs.mkdirSync fileDir
-            fs.writeFile fileDir+"detail.txt", detail, (err)->
-              if err
-                console.log 'detail'
-                throw err
-            fs.writeFile fileDir+"simple.txt", simple, (err)->
-              if err
-                console.log 'simple'
-                throw err
-            console.log simple
+              console.log err
+            if docs.length == 0
+              instance = new weatherModel()
+              instance.detail = detail
+              instance.simple = simple
+              instance.areaCode = aCode
+              instance.isMajor = isMajor
+              instance.prefecture = pName
+              instance.name = cName
+              instance.save (err)->
+                if err
+                  console.log err
+                else
+                  console.log 'success'
+            else
+              console.log docs
+              instance = docs[0]
+              instance.detail = detail;
+              instance.simple = simple
+              instance.areaCode = aCode
+              instance.isMajor = isMajor
+              instance.prefecture = pName
+              instance.name = cName
+              instance.save (err)->
+                if err
+                  console.log err
+                else
+                  console.log 'success'
 
       ###
       花粉指数、熱中症指数、不快指数、ビール指数、アイスクリーム指数に関しては
@@ -80,7 +106,6 @@ module.exports = ()->
         success: (data)->
           d = data.daily
           weather = d.wDescription
-          console.log d
           temp.max = d.maxTemp
           temp.min = d.minTemp
           countCheck()
@@ -112,8 +137,9 @@ module.exports = ()->
         url: "http://w002.tenkiapi.jp/"+userID+"/umbrella/?p1="+areacode+"&p2=01&type=json"
         type: 'GET'
         dataType: "json"
-        success: (data)->
-          umbrella = data.umbrella.umbrellaIndex[0].ranking
+        success: (data)=>
+          umbrella.num = data.umbrella.umbrellaIndex[0].value
+          umbrella.rank = data.umbrella.umbrellaIndex[0].ranking
           countCheck()
         error: ()->
           console.log 'error'
@@ -124,7 +150,7 @@ module.exports = ()->
         dataType: "json"
         success: (data)->
           wash.num = data.wash.clothDriedIndex[0].value
-          wash.ranking = data.wash.clothDriedIndex[0].ranking
+          wash.rank = data.wash.clothDriedIndex[0].ranking
           countCheck()
         error: ()->
           console.log 'error'
@@ -134,7 +160,8 @@ module.exports = ()->
         type: 'GET'
         dataType: "json"
         success: (data)->
-          cough = data.cough.coughIndex[0].value
+          cough.num = data.cough.coughIndex[0].value
+          cough.rank = data.cough.coughIndex[0].ranking
           countCheck()
         error: ()->
           console.log 'error'
@@ -144,7 +171,8 @@ module.exports = ()->
         type: 'GET'
         dataType: "json"
         success: (data)->
-          skin = data.skin.skinDriedIndex[0].value
+          skin.num = data.skin.skinDriedIndex[0].value
+          skin.rank = data.skin.skinDriedIndex[0].ranking
           countCheck()
         error: ()->
           console.log 'error'
@@ -154,7 +182,8 @@ module.exports = ()->
         type: 'GET'
         dataType: "json"
         success: (data)->
-          hotpot = data.hotpot.hotPotIndex[0].value
+          hotpot.num = data.hotpot.hotPotIndex[0].value
+          hotpot.rank = data.hotpot.hotPotIndex[0].ranking
           countCheck()
         error: ()->
           console.log 'error'
@@ -164,7 +193,8 @@ module.exports = ()->
         type: 'GET'
         dataType: "json"
         success: (data)->
-          starry = data.starry.starryIndex[0].value
+          starry.num = data.starry.starryIndex[0].value
+          starry.rank = data.starry.starryIndex[0].ranking
           countCheck()
         error: ()->
           console.log 'error'
@@ -174,7 +204,8 @@ module.exports = ()->
         type: 'GET'
         dataType: "json"
         success: (data)->
-          quilt = data.quilt.quiltIndex[0].value
+          quilt.num = data.quilt.quiltIndex[0].value
+          quilt.rank = data.quilt.quiltIndex[0].ranking
           countCheck()
         error: ()->
           console.log 'error'
@@ -184,14 +215,109 @@ module.exports = ()->
         type: 'GET'
         dataType: "json"
         success: (data)->
-          cloth_layer = data.clothLayer.clothLayeringIndex[0].value
+          cloth_layer.num = data.clothLayer.clothLayeringIndex[0].value
+          cloth_layer.rank = data.clothLayer.clothLayeringIndex[0].ranking
           countCheck()
         error: ()->
           console.log 'error'
 
+      violetRank:(num)->
+        mes = ""
+        if num >= 0 && num <30
+          mes = "弱い"
+        else if num >= 30 && num < 50
+          mes = "やや強い"
+        else if num >= 50 && num < 70
+          mes = "強い"
+        else if num >= 70 && num < 90
+          mes = "非常に強い"
+        else if num >= 90
+          mes = "極めて強い"
+        return mes
+      umbrellaRank:(num)->
+        mes = ""
+        switch num
+          when 1 then mes = "傘は必要なさそうです。"
+          when 2 then mes = "折りたたみ傘を持ち歩くと良いです"
+          when 3 then mes = "傘を持ち歩いたほうが良いです"
+          when 4 then mes = "傘を手放さないほうが良いでしょう"
+          when 5 then mes = "絶対に傘が必要です"
+        return mes
+      washRank:(num)->
+        mes = ""
+        switch num
+          when 1 then mes = "洗濯には適さないでしょう"
+          when 2 then mes = "乾燥しにくいかもしれません"
+          when 3 then mes = "比較的、洗濯には適した日です"
+          when 4 then mes = "絶好の洗濯日和といえます"
+        return mes
+      coughRank: (num)->
+        mes = ""
+        switch num
+          when 1 then mes = "風邪をひく危険はそこまで高くありません"
+          when 2 then mes = "風邪予防をちゃんとしましょう"
+          when 3 then mes = "少し風邪を引きやすいので注意しましょう"
+          when 4 then mes = "風邪を引きやすいので気をつけましょう"
+          when 5 then mes = "風邪になりやすくなっています。手洗いなどちゃんとしましょう"
+        return mes
+      skinRank: (num)->
+        mes = ""
+        switch num
+          when 1 then mes = "お肌すべすべですね！"
+          when 2 then mes = "肌荒れの危険性はあまりないです。"
+          when 3 then mes = "肌荒れの危険性がありそう！"
+          when 4 then mes = "乾燥してます！気をつけて！"
+          when 5 then mes = "とても乾燥してます！ケアをちゃんとしましょう！"
+        return mes
+      hotpotRank: (num)->
+        mes = ""
+        switch num
+          when 1 then mes = "お鍋はあまりおすすめできないですねー"
+          when 2 then mes = "さっぱりお鍋がおすすめ！"
+          when 3 then mes = "寒い日は鍋で温まりましょう"
+          when 4 then mes = "熱々のお鍋料理がおすすめ！"
+          when 5 then mes = "お鍋料理、食べるしかないです！"
+        return mes
+      starryRank: (num)->
+        mes = ""
+        switch num
+          when 1 then mes = "星空は見れなさそうです"
+          when 2 then mes = "じっくりと見れば、見れるかも。"
+          when 3 then mes = "チャンスあり！夜空を見てみましょう。"
+          when 4 then mes = "星座、いくつ見つけられるかな？"
+          when 5 then mes = "空いっぱいに、星が広がってます！"
+        return mes
+      quiltRank: (num)->
+        mes = ""
+        switch num
+          when 1 then mes = "タオルケットぐらいで十分！"
+          when 2 then mes = "厚めのふとんの用意が必要！"
+          when 3 then mes = "そろそろ毛布の準備をしましょう"
+          when 4 then mes = "なかなか布団から出れなさそうです。"
+          when 5 then mes = "だいぶ寒いです！布団でしっかり温まりましょう！"
+        return mes
+      clothLayerRank: (num)->
+        mes = ""
+        switch num
+          when 1 then mes = "半そでで大丈夫！"
+          when 2 then mes = "薄手のセーターが欲しいかも！"
+          when 3 then mes = "コートがそろそろ必要ですね"
+          when 4 then mes = "ダウンジャケットでしっかり防寒！"
+          when 5 then mes = "寒すぎ危険！ちゃんと防寒しましょう！"
+        return mes
+
     getPrefecturesData: ()->
       return @prefecturesData
+    reload: ()->
+      _.each @prefecturesData, (d)=>
+        #console.log d
+        p = d.prefecture
+        _.each d.cities, (value, key)=>
+          @set(p, key, value)
+
+
     prefecturesData:
+
       1:{
         prefecture:"北海道"
         cities:

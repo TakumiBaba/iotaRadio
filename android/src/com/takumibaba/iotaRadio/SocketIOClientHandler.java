@@ -1,25 +1,21 @@
 package com.takumibaba.iotaRadio;
 
-import java.util.Locale;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
 import com.codebutler.android_websockets.SocketIOClient.Handler;
 
-public class SocketIOClientHandler implements Handler, TextToSpeech.OnInitListener{
+public class SocketIOClientHandler implements Handler{
 
 	private Context context;
-	private TextToSpeech tts;
+	private TtsController ttsController;
 	//コンストラクタの部分でttsを宣言。contextを引数にすればいけそう？
-	SocketIOClientHandler(Context context){
-		this.context = context;
-		tts = new TextToSpeech(this.context,this);
+	SocketIOClientHandler(TtsController tts){
+		this.ttsController = tts;
 	}
 
 	@Override
@@ -28,17 +24,26 @@ public class SocketIOClientHandler implements Handler, TextToSpeech.OnInitListen
 		
 		Log.d("websocket","connection start");
 		
-		
 	}
 
 	@Override
 	public void on(String event, JSONArray arguments) {
 		
 		if(event.equals("weather")){
-			JSONObject contents = null;
+			Log.d("websocket", event);
+			JSONObject args = null;
 			try {
-				contents = arguments.getJSONObject(0);
-				tts.speak(contents.getString("contents"), TextToSpeech.QUEUE_FLUSH,null);
+				args = arguments.getJSONObject(0);
+				String contents = args.getString("contents");
+				String[] dividedContents = new String[5];
+				String[] list = contents.split("!!!",0);
+				for(int i=0;i<list.length;i++){
+					ttsController.add(list[i].trim());
+					if(i == 0){
+						ttsController.next();
+					}
+					Log.e("weatherlist", list[i]);
+				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -47,18 +52,6 @@ public class SocketIOClientHandler implements Handler, TextToSpeech.OnInitListen
 		}else{
 			
 		}
-		Log.d("websocket",event);
-		Log.d("websocket",arguments.toString());
-		JSONObject hoge = null;
-		try{
-			hoge = arguments.getJSONObject(0);
-			Log.d("hoge",hoge.getString("hoge"));
-			tts.speak(hoge.getString("hoge"),TextToSpeech.QUEUE_FLUSH,null);
-		}catch(JSONException e){
-			e.printStackTrace();
-		}
-		
-
 	}
 
 	@Override
@@ -71,20 +64,5 @@ public class SocketIOClientHandler implements Handler, TextToSpeech.OnInitListen
 	public void onError(Exception error) {
 		// TODO Auto-generated method stub
 
-	}
-	 
-	public void onInit(int status){
-		if(TextToSpeech.SUCCESS == status){
-			Locale locale = Locale.JAPAN;
-			if(tts.isLanguageAvailable(locale) >= TextToSpeech.LANG_AVAILABLE){
-				tts.setLanguage(locale);
-				Log.d("test","language set");
-			}else{
-				
-				Log.d("", "Error setlocal");
-			}
-		}else{
-			Log.d("","error init");
-		}
 	}
 }
