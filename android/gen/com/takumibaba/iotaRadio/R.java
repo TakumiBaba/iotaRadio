@@ -8,6 +8,56 @@
 package com.takumibaba.iotaRadio;
 
 public final class R {
+    public static final class array {
+        public static final int prefecture_1=0x7f040001;
+        public static final int prefecture_10=0x7f04000a;
+        public static final int prefecture_11=0x7f04000b;
+        public static final int prefecture_12=0x7f04000c;
+        public static final int prefecture_13=0x7f04000d;
+        public static final int prefecture_14=0x7f04000e;
+        public static final int prefecture_15=0x7f04000f;
+        public static final int prefecture_16=0x7f040010;
+        public static final int prefecture_17=0x7f040011;
+        public static final int prefecture_18=0x7f040012;
+        public static final int prefecture_19=0x7f040013;
+        public static final int prefecture_2=0x7f040002;
+        public static final int prefecture_20=0x7f040014;
+        public static final int prefecture_21=0x7f040015;
+        public static final int prefecture_22=0x7f040016;
+        public static final int prefecture_23=0x7f040017;
+        public static final int prefecture_24=0x7f040018;
+        public static final int prefecture_25=0x7f040019;
+        public static final int prefecture_26=0x7f04001a;
+        public static final int prefecture_27=0x7f04001b;
+        public static final int prefecture_28=0x7f04001c;
+        public static final int prefecture_29=0x7f04001d;
+        public static final int prefecture_3=0x7f040003;
+        public static final int prefecture_30=0x7f04001e;
+        public static final int prefecture_31=0x7f04001f;
+        public static final int prefecture_32=0x7f040020;
+        public static final int prefecture_33=0x7f040021;
+        public static final int prefecture_34=0x7f040022;
+        public static final int prefecture_35=0x7f040023;
+        public static final int prefecture_36=0x7f040024;
+        public static final int prefecture_37=0x7f040025;
+        public static final int prefecture_38=0x7f040026;
+        public static final int prefecture_39=0x7f040027;
+        public static final int prefecture_4=0x7f040004;
+        public static final int prefecture_40=0x7f040028;
+        public static final int prefecture_41=0x7f040029;
+        public static final int prefecture_42=0x7f04002a;
+        public static final int prefecture_43=0x7f04002b;
+        public static final int prefecture_44=0x7f04002c;
+        public static final int prefecture_45=0x7f04002d;
+        public static final int prefecture_46=0x7f04002e;
+        public static final int prefecture_47=0x7f04002f;
+        public static final int prefecture_5=0x7f040005;
+        public static final int prefecture_6=0x7f040006;
+        public static final int prefecture_7=0x7f040007;
+        public static final int prefecture_8=0x7f040008;
+        public static final int prefecture_9=0x7f040009;
+        public static final int prefectures=0x7f040000;
+    }
     public static final class attr {
     }
     public static final class drawable {
@@ -15,23 +65,28 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int button1=0x7f070001;
-        public static final int menu_settings=0x7f070002;
-        public static final int textView1=0x7f070000;
+        public static final int area_select=0x7f080005;
+        public static final int connection_button=0x7f080000;
+        public static final int menu_settings=0x7f080006;
+        public static final int news_button=0x7f080002;
+        public static final int soudan_button=0x7f080004;
+        public static final int speak_button=0x7f080001;
+        public static final int wikipedia_button=0x7f080003;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
     }
     public static final class menu {
-        public static final int activity_main=0x7f060000;
+        public static final int activity_main=0x7f070000;
     }
     public static final class string {
-        public static final int app_name=0x7f040000;
-        public static final int hello_world=0x7f040001;
-        public static final int menu_settings=0x7f040002;
-        public static final int title_activity_main=0x7f040003;
+        public static final int app_name=0x7f050000;
+        public static final int connection_button_value=0x7f050004;
+        public static final int hello_world=0x7f050001;
+        public static final int menu_settings=0x7f050002;
+        public static final int title_activity_main=0x7f050003;
     }
     public static final class style {
-        public static final int AppTheme=0x7f050000;
+        public static final int AppTheme=0x7f060000;
     }
 }

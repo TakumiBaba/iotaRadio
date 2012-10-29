@@ -3,22 +3,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/hello_world"
-        tools:context=".MainActivity" />
-
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/connection_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
-        android:text="Button" />
+        android:text="@+string/connection_button_value" />
+
+    <Button
+        android:id="@+id/speak_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/connection_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="37dp"
+        android:text="天気チャンネル！" />
+
+    <Button
+        android:id="@+id/news_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/speak_button"
+        android:layout_below="@+id/speak_button"
+        android:layout_marginTop="23dp"
+        android:text="ニュースちゃんねる" />
+
+    <Button
+        android:id="@+id/wikipedia_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/news_button"
+        android:layout_below="@+id/news_button"
+        android:layout_marginTop="86dp"
+        android:text="うぃきぺでいあ！" />
+
+    <Button
+        android:id="@+id/soudan_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/wikipedia_button"
+        android:layout_below="@+id/news_button"
+        android:layout_marginTop="32dp"
+        android:text="相談コーナー" />
+
+    <Button
+        android:id="@+id/area_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp"
+        android:text="エリア選択" />
 
 </RelativeLayout>

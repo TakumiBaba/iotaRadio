@@ -3,6 +3,7 @@ fs = require 'fs'
 Url = require 'url'
 http = require 'http'
 weather = require("./weather")()
+Chiebukuro = require "./chiebukuro"
 exports.AppController = (app) ->
 
   {App} = app.settings.models
@@ -51,12 +52,29 @@ exports.AppController = (app) ->
         #console.log err
       req.end()
 
+    chiebukuro:(req, res, next)->
+      c = new Chiebukuro()
+      c.set()
+      res.send 'hoge'
+    chiebukuroGet:(req, res, next)->
+      c = new Chiebukuro()
+      hoge = c.get()
+      res.json hoge
+
     weather: (req,res,next)->
-      console.log weather.get(req.params.area)
-      res.send weather.get(req.params.area)
+      body = weather.get req.params.prefecture, req.params.area, (body)->
+        res.json body
+
+
+
+    weather_test:(req, res, next)->
+      weather.reload()
+      res.send 'hoge'
 
     websocket: (socket)->
       socket.on 'weather', (data)->
-        socket.emit "weather"
-          contents: weather.get(data.area)
+        weather.get data.prefecture, data.area, (d)->
+          socket.emit 'weather'
+            contents: d
+
   }

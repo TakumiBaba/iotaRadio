@@ -1,3 +1,4 @@
+
 http = require 'http'
 Url  = require 'url'
 parser = require "libxml-to-js"
@@ -6,9 +7,11 @@ fs = require 'fs'
 pref = (require '../../config/weather')()
 CronJob = require('cron').CronJob
 
+
 exports.ContentsGetter = (app)->
 
   #weather_cront_time = "00 00 1,6,12,18 * * *"
+  ###
   weather_cront_time = "00 11 * * * *"
   weather_job = new CronJob
     cronTime: weather_cront_time
@@ -23,6 +26,7 @@ exports.ContentsGetter = (app)->
     start: false
     timeZone: "Japan/Tokyo"
   weather_job.start()
+  ###
 
   yahoo_appid = "QgolUhOxg66v9Cjr795kmpFfbGT9il5vtJev3DeQ2U_c6cylTHE1dOiYeoQj1Bg-"
   topic_api = "http://news.yahooapis.jp/NewsWebService/V1/Topics"
@@ -45,7 +49,7 @@ exports.ContentsGetter = (app)->
 
     countCheck = ()->
       apiCount -= 1
-      detail = "#{pName}、#{cName}の天気は、#{weather},最低気温は、#{temp.min}℃最高気温は、#{temp.max}℃です。体感温度は、#{temp.effective}です。続いて各種指数についてお知らせします。紫外線指数は #{violet.num} と#{violet.rank}でしょう。傘指数は、#{umbrella}です。洗濯指数は、#{wash.num}で#{wash.rank}でしょう。風邪ひき指数は、#{cough}です。素肌乾燥指数は、#{skin}です。鍋物指数は、#{hotpot}です。星空指数は、#{starry}です。掛け布団指数は、#{quilt}です。重ね着指数は、#{cloth_layer}です。"
+      detail = "#{pName}、#{cName}の天気は、#{weather},最低気温は、#{temp.min}℃最高気温は、#{temp.max}℃です。体感温度は、#{temp.effective}です。続いて各種指数についてお知らせします。!!!紫外線指数は #{violet.num} と#{violet.rank}でしょう。傘指数は、#{umbrella}です。洗濯指数は、#{wash.num}で#{wash.rank}でしょう。風邪ひき指数は、#{cough}です。!!!素肌乾燥指数は、#{skin}です。鍋物指数は、#{hotpot}です。星空指数は、#{starry}です。掛け布団指数は、#{quilt}です。重ね着指数は、#{cloth_layer}です。"
       simple = "#{pName}、#{cName}の天気は、#{weather},最低気温は、#{temp.min}℃最高気温は、#{temp.max}℃です。"
       if apiCount is 0
         fileDir = "./public/weather_channel/"+areacode+"/"
@@ -63,8 +67,8 @@ exports.ContentsGetter = (app)->
           console.log simple
 
     ###
-    花粉指数、熱中症指数、不快指数、ビール指数、アイスクリーム指数に関しては
-    これからの季節的には情報取得できないのでとりあえず取得しない
+   # 花粉指数、熱中症指数、不快指数、ビール指数、アイスクリーム指数に関しては
+   # これからの季節的には情報取得できないのでとりあえず取得しない
     ###
 
     #天気全般

@@ -11,9 +11,7 @@ module.exports = (app, io) ->
 
 
   # Routing
-  app.get "/weather/:area", AppController.weather
-  ###
-  app.get '/', AppController.index
-  app.get '/tts', AppController.tts
-  app.get '/news', AppController.news
-###
+  app.get "/weather/get/get", AppController.weather_test
+  app.get "/weather/:prefecture/:area", AppController.weather
+  app.get "/chiebukuro", AppController.chiebukuro
+  app.get "/chiebukuro_get", AppController.chiebukuroGet
