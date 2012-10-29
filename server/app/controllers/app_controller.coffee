@@ -3,6 +3,7 @@ fs = require 'fs'
 Url = require 'url'
 http = require 'http'
 weather = require("./weather")()
+news = require("./news")()
 exports.AppController = (app) ->
 
   {App} = app.settings.models
@@ -16,23 +17,8 @@ exports.AppController = (app) ->
         req: req
         t: req.params.test
 
-    news: (req, res, next)->
-      $.ajax
-        type: "GET"
-        dataType: 'xml'
-        url: "http://news.yahooapis.jp/NewsWebService/V1/Topics?appid=QgolUhOxg66v9Cjr795kmpFfbGT9il5vtJev3DeQ2U_c6cylTHE1dOiYeoQj1Bg-"
-        success: (data)->
-          console.log 'success'
-          res.json data
-        error: (e)->
-          results = e.responseText
-          results = $(results).find 'result'
-          p = ""
-          for result in results
-            if result._childNodes._nodeName is 'title'
-              p += result._childNodes._nodeName + "\n"
-
-          res.send p
+    news: (req,res,next)->
+      res.send news.get(req.params.area)
 
     tts: (req, res, next)->
 

@@ -18,6 +18,7 @@
     "socket.io": "*",
     "libxml-to-js": "*",
     "cron": "*",
+    "feedparser": "*",
     "xmlhttprequest": "*"
   },
   "devDependencies": {},
