@@ -1,3 +1,4 @@
+
 class Chiebukuro
   category_list:
     2078297513:"エンターテインメントと趣味"
@@ -18,6 +19,7 @@ class Chiebukuro
   constructor:()->
     console.log 'construct'
     @mongoose = require 'mongoose'
+    @xmlrpc = require 'xmlrpc'
     @APP_ID = "QgolUhOxg66v9Cjr795kmpFfbGT9il5vtJev3DeQ2U_c6cylTHE1dOiYeoQj1Bg-"
     @address = "http://chiebukuro.yahooapis.jp/Chiebukuro/V1/getNewQuestionList"
     @params = "&condition=solved&sort=-anscount&output=json"
@@ -58,10 +60,19 @@ class Chiebukuro
           doc.remove()
 
   post:(name, category, message)->
-    _.each @category_list, (c)=>
-      if category is c
-        console.log name
-        console.log message
+    client = @xmlrpc.createClient {host: 'q.hatena.ne.jp', path: '/xmlrpc'}
+    # Sends a method call to the XML-RPC server
+    client.methodCall 'question.getSimilarQuestion', [{'content': "代官山付近でおいしいランチを食べられるお店を教えてください。"}], (error, value)->
+      # TODO: 似たような質問を取得するところはできたが、答えをパースできてない
+      console.log value
+      console.log error
+    # Results of the method response
+    # console.log "Method response for 'anAction': #{value}"
+
+    # _.each @category_list, (c)=>
+    #   if category is c
+    #     console.log name
+    #     console.log message
 
   get:(fn)->
     chiebukuroModel = @mongoose.model 'chiebukuro'

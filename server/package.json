@@ -19,6 +19,7 @@
     "libxml-to-js": "*",
     "cron": "*",
     "feedparser": "*",
+    "xmlrpc": "*",
     "xmlhttprequest": "*"
   },
   "devDependencies": {},
