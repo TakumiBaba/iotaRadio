@@ -1,7 +1,7 @@
 class Chiebukuro
   category_list:
     2078297513:"エンターテインメントと趣味"
-    2078297937:"'暮らしと生活ガイド"
+    2078297937:"暮らしと生活ガイド"
     2078297382:"インターネット、PCと家電"
     2078297854:"健康、美容とファッション"
     2078297790:"ビジネス、経済とお金"
@@ -14,7 +14,6 @@ class Chiebukuro
     2078297753:"スポーツ、アウトドア、車"
     2078297918:"地域、旅行、お出かけ"
     2078297616:"コンピュータテクノロジー"
-    2078297353:"おしゃべり、雑談"
 
   constructor:()->
     console.log 'construct'
@@ -36,18 +35,19 @@ class Chiebukuro
             chiebukuroModel.find questionId: result.QuestionId, (err, docs)=>
               if err
                 throw err
-              instance = new chiebukuroModel()
-              instance.questionId = result.QuestionId
-              instance.content = result.Content
-              instance.category = result.Category
-              instance.parentCategoryId = parentCategoryId
-              instance.categoryId = result.CategoryId
-              instance.bestAnswer = result.BestAnswer
-              instance.save (err)->
-                if err
-                  throw err
-                else
-                  console.log 'success'
+              if docs.length == 0
+                instance = new chiebukuroModel()
+                instance.questionId = result.QuestionId
+                instance.content = result.Content
+                instance.category = result.Category
+                instance.parentCategoryId = parentCategoryId
+                instance.categoryId = result.ategoryId
+                instance.bestAnswer = result.BestAnswer
+                instance.save (err)->
+                  if err
+                    throw err
+                  else
+                    console.log 'success'
         error:(err)->
           console.log err
   reset:->
@@ -55,16 +55,47 @@ class Chiebukuro
     chiebukuroModel.find {}, (err, docs)->
       if !err
         _.each docs, (doc)->
-          docs.remove()
+          doc.remove()
 
   post:(name, category, message)->
+    _.each @category_list, (c)=>
+      if category is c
+        console.log name
+        console.log message
 
-
-  get:()->
+  get:(fn)->
     chiebukuroModel = @mongoose.model 'chiebukuro'
+    body = "相談チャンネル〜。みなさんから頂いた質問や相談を、みんなで解決して行こうというコーナーです。質問は随時受け付けてますので皆さんからのお便りお待ちしております。"
+    state = 0
+    chiebukuroModel.find {}, (err, docs)=>
+      _.each docs, (doc)=>
+        _.each @category_list, (categoryname, categoryid)=>
+          if doc.parentCategoryId is categoryid
+            if state is 0
+              state += 1
+              body += "まず、最初のテーマは、#{categoryname}です。!!!"
+            else
+              body += "続いてのテーマは、#{categoryname}です。!!!"
+            body += "こおりやまはやとさんの投稿です。!!!"
+            body += doc.content+"!!!"
+            body += "これに答えてくれたのは、あきやまひろきさんです!!!"
+            body += doc.bestAnswer+"!!!"
+      fn body
+      ###
     _.each @category_list, (categoryname, categoryid)=>
-      chiebukuroModel.find {}, (err, docs)->
-        console.log docs
-
+      chiebukuroModel.find {parentCategoryId: categoryid}, (err, docs)=>
+        _.each docs, (doc)=>
+          console.log doc.content
+          if state is 0
+            state += 1
+            body += "まず、最初のテーマは、#{categoryname}です。"
+          else
+            body += "続いてのテーマは、#{categoryname}です。"
+          body += "こおりやまはやとさんの投稿です。"
+          body += doc.content
+          body += "これに答えてくれたのは、あきやまひろきさんです"
+          body += doc.bestAnswer
+    fn(body)
+    ###
 
 module.exports = Chiebukuro

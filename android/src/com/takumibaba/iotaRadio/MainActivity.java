@@ -53,9 +53,74 @@ public class MainActivity extends Activity {
     	client.connect();
    
         Button button = (Button)findViewById(R.id.connection_button);
-        Button button2 = (Button)findViewById(R.id.area_select);
+        Button soudan = (Button)findViewById(R.id.soudan_button);
+        Button news   = (Button)findViewById(R.id.news_button);
+        Button wikipedia = (Button)findViewById(R.id.wikipedia_button);
+        wikipedia.setOnClickListener(new View.OnClickListener() {	
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				new AsyncTask<Void, Void, Void>(){
+
+					@Override
+					protected Void doInBackground(Void... params) {
+						JSONArray arguments = new JSONArray();
+						try {
+							client.emit("wikipedia", arguments);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						
+						return null;
+					}
+		        	
+		        }.execute();
+			}
+		});
+        soudan.setOnClickListener(new View.OnClickListener() {	
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				new AsyncTask<Void, Void, Void>(){
+
+					@Override
+					protected Void doInBackground(Void... params) {
+						JSONArray arguments = new JSONArray();
+						try {
+							client.emit("chiebukuro", arguments);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						
+						return null;
+					}
+		        	
+		        }.execute();
+			}
+		});
+        news.setOnClickListener(new View.OnClickListener() {	
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				new AsyncTask<Void, Void, Void>(){
+
+					@Override
+					protected Void doInBackground(Void... params) {
+						JSONArray arguments = new JSONArray();
+						try {
+							client.emit("news", arguments);
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						return null;
+					}
+		        	
+		        }.execute();
+			}
+		});
         button.setOnClickListener(new View.OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub

@@ -49,8 +49,63 @@ public class SocketIOClientHandler implements Handler{
 				e.printStackTrace();
 			}
 			
-		}else{
-			
+		}else if(event.equals("chiebukuro")){
+			Log.d("websocket", event);
+			JSONObject args = null;
+			try {
+				args = arguments.getJSONObject(0);
+				String contents = args.getString("contents");
+				String[] dividedContents = new String[5];
+				String[] list = contents.split("!!!",0);
+				for(int i=0;i<list.length;i++){
+					ttsController.add(list[i].trim());
+					if(i == 0){
+						ttsController.next();
+					}
+					Log.e("weatherlist", list[i]);
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else if(event.equals("news")){
+			Log.d("websocket", event);
+			JSONObject args = null;
+			try {
+				args = arguments.getJSONObject(0);
+				String contents = args.getString("contents");
+				String[] dividedContents = new String[5];
+				String[] list = contents.split("!!!",0);
+				for(int i=0;i<list.length;i++){
+					ttsController.add(list[i].trim());
+					if(i == 0){
+						ttsController.next();
+					}
+					Log.e("weatherlist", list[i]);
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else if(event.equals("wikipedia")){
+			Log.d("websocket", event);
+			JSONObject args = null;
+			try {
+				args = arguments.getJSONObject(0);
+				String contents = args.getString("contents");
+				String[] dividedContents = new String[5];
+				String[] list = contents.split("!!!",0);
+				for(int i=0;i<list.length;i++){
+					ttsController.add(list[i].trim());
+					if(i == 0){
+						ttsController.next();
+					}
+					Log.e("weatherlist", list[i]);
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
